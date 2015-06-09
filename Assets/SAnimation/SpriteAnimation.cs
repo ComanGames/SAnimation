@@ -18,7 +18,7 @@ namespace Assets.SAnimation
         public void Start()
         {
             LoadAnimation();
-            //_spriteAnimation.Preload();
+            _spriteAnimation.PreLoad();
             _spriteRenderer = GetComponent<SpriteRenderer>();
             StartCoroutine(UpdeatingSprite());
         }
