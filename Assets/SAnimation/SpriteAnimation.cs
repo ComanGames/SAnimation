@@ -12,22 +12,25 @@ namespace Assets.SAnimation
         //Public Variables 
         public float Fps = 10;
         public string FolderName = "Factory";
-        private SpriteRenderer _currentSprite;
+        private SpriteRenderer _spriteRenderer;
         private CircleLinkedList _spriteAnimation;
 
         public void Start()
         {
-            TextAsset temp = Resources.Load<TextAsset>(FolderName+@"/Baked");
-            XmlSerializer xs = new XmlSerializer(typeof(CircleLinkedList));
-            Debug.Log(temp.text);
+            LoadAnimation();
+            //_spriteAnimation.Preload();
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+            StartCoroutine(UpdeatingSprite());
+        }
+
+        private void LoadAnimation()
+        {
+            TextAsset temp = Resources.Load<TextAsset>(FolderName + @"/Baked");
+            XmlSerializer xs = new XmlSerializer(typeof (CircleLinkedList));
             using (TextReader reader = new StringReader(temp.text))
             {
-                _spriteAnimation = (CircleLinkedList)xs.Deserialize(reader);
+                _spriteAnimation = (CircleLinkedList) xs.Deserialize(reader);
             }
-            //           _spriteAnimation.Preload();
-            _currentSprite = GetComponent<SpriteRenderer>();
-            _currentSprite.sprite = _spriteAnimation._current.Item;
-            StartCoroutine(UpdeatingSprite());
         }
 
         IEnumerator UpdeatingSprite()
@@ -41,7 +44,7 @@ namespace Assets.SAnimation
 
         private void GoToNextFrame()
         {
-            _currentSprite.sprite = _spriteAnimation.Next();
+            _spriteRenderer.sprite = _spriteAnimation.Next();
         }
     }
 }

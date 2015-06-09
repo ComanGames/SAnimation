@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.SAnimation
@@ -26,7 +27,9 @@ namespace Assets.SAnimation
 
                     SpriteAnimation sa = gameObject.AddComponent<SpriteAnimation>();
                     sa.FolderName = Name;
+                    AssetDatabase.Refresh();
                     Baked = false;
+                    DestroyImmediate(this);
 
                 }
                 else
@@ -40,11 +43,10 @@ namespace Assets.SAnimation
 
         private void SaveData(string[] spriteNames)
         {
+
             CircleLinkedList obj = new CircleLinkedList(spriteNames);
             XmlSerializer xs = new XmlSerializer(typeof (CircleLinkedList));
             FileStream fs = File.Create(Environment.CurrentDirectory + @"\Assets\Resources\" + Name + @"\Baked.xml");
-            Debug.Log(obj.Next().name);
-            Debug.Log(Environment.CurrentDirectory);
             xs.Serialize(fs, obj);
             fs.Close();
         }

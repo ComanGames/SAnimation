@@ -4,16 +4,28 @@ using UnityEngine;
 namespace Assets.SAnimation
 {
     [Serializable]
-    public class CircleLinkedList 
-    {
+    public class CircleLinkedList
+    {        
         [Serializable]
         public class Node
         {
             public Node Next;
-            [NonSerialized]
-            public Sprite Item;
-            public string FilePath;
+            public string FilePath; 
+            private Sprite _item;
 
+            public void LoadSprite()
+            {
+                if (FilePath == "") 
+                    throw new InvalidOperationException("You didn't set the file path");
+                _item=Resources.Load<Sprite>(FilePath);
+            }
+
+            public Sprite GetSprite()
+            {
+                if(_item==null)
+                    LoadSprite();
+                return _item;
+            }
             public Node() { }
 
             public Node(string path,Node next)
@@ -23,11 +35,12 @@ namespace Assets.SAnimation
             }
         }
 
-        public Node _current;
-        public Node _firstNode;
+        public Node FirstNode;
+        private Node _current;
 
         public CircleLinkedList()
         {
+
         }
 
         public CircleLinkedList(string[] items)
@@ -39,49 +52,34 @@ namespace Assets.SAnimation
                 Node temp = new Node(items[i],tempLast);
                 tempLast = temp;
             }
-            _firstNode = tempLast;
-            _current = last;
+            FirstNode = tempLast;
 
         }
 
+        
         public Sprite Next()
         {
             if (_current == null)
             {
-                throw new InvalidOperationException();
+                _current = FirstNode;
             }
-            else
-            {
-                Debug.Log(_current.FilePath);
-            }
+
             if (_current.Next == null)
             {
-                if (_current == _firstNode)
-                    return _current.Item;
-                _current = _firstNode;
+                if (_current == FirstNode)
+                    return _current.GetSprite();
+                _current = FirstNode;
 
             }
             _current = _current.Next;
-            if (_current.Item == null)
+            if (_current.GetSprite() == null)
             {
-                _current = LoadSprite(_current);
+                _current.LoadSprite();
             }
-            return _current.Item;
+            return _current.GetSprite();
         }
 
-        private Node LoadSprite(Node node)
-        {
-            if (node == null)
-                return null;
-            if(node.FilePath==default(string))
-                throw  new InvalidOperationException("you haven't set the path");
-            node.Item = Resources.Load<Sprite>(node.FilePath);
-            if (node.Item == null)
-            {
-                throw new ArgumentException();
-            }
-            return node;
+        
 
-        }
     }
 }
