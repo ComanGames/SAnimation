@@ -3,7 +3,7 @@ using System.IO;
 using System.Xml.Serialization;
 using UnityEngine;
 
-namespace Assets
+namespace Assets.SAnimation
 {
     [RequireComponent(typeof(SpriteRenderer))]
     public class SpriteAnimation : MonoBehaviour
@@ -12,23 +12,21 @@ namespace Assets
         //Public Variables 
         public float Fps = 10;
         public string FolderName = "Factory";
-        private SpriteRenderer currentSprite;
+        private SpriteRenderer _currentSprite;
         private CircleLinkedList _spriteAnimation;
 
         public void Start()
         {
             TextAsset temp = Resources.Load<TextAsset>(FolderName+@"/Baked");
-            if (temp == null)
-            {
-                Debug.Log("O-P");
-            }
             XmlSerializer xs = new XmlSerializer(typeof(CircleLinkedList));
+            Debug.Log(temp.text);
             using (TextReader reader = new StringReader(temp.text))
             {
-                 _spriteAnimation= (CircleLinkedList)xs.Deserialize(reader);
+                _spriteAnimation = (CircleLinkedList)xs.Deserialize(reader);
             }
-            
-            currentSprite = GetComponent<SpriteRenderer>();
+            //           _spriteAnimation.Preload();
+            _currentSprite = GetComponent<SpriteRenderer>();
+            _currentSprite.sprite = _spriteAnimation._current.Item;
             StartCoroutine(UpdeatingSprite());
         }
 
@@ -43,7 +41,7 @@ namespace Assets
 
         private void GoToNextFrame()
         {
-            currentSprite.sprite = _spriteAnimation.Next();
+            _currentSprite.sprite = _spriteAnimation.Next();
         }
     }
 }

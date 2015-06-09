@@ -1,12 +1,12 @@
 using System;
 using UnityEngine;
 
-namespace Assets
+namespace Assets.SAnimation
 {
-    [System.Serializable]
+    [Serializable]
     public class CircleLinkedList 
     {
-        [System.Serializable]
+        [Serializable]
         public class Node
         {
             public Node Next;
@@ -24,7 +24,7 @@ namespace Assets
         }
 
         public Node _current;
-        public Node FirstNode;
+        public Node _firstNode;
 
         public CircleLinkedList()
         {
@@ -39,32 +39,49 @@ namespace Assets
                 Node temp = new Node(items[i],tempLast);
                 tempLast = temp;
             }
-            FirstNode = tempLast;
+            _firstNode = tempLast;
             _current = last;
 
         }
 
         public Sprite Next()
         {
-
+            if (_current == null)
+            {
+                throw new InvalidOperationException();
+            }
+            else
+            {
+                Debug.Log(_current.FilePath);
+            }
             if (_current.Next == null)
             {
-                _current = FirstNode;
+                if (_current == _firstNode)
+                    return _current.Item;
+                _current = _firstNode;
 
             }
             _current = _current.Next;
             if (_current.Item == null)
             {
-                _current.Item = Resources.Load<Sprite>(_current.FilePath);
-                if (_current.Item == null)
-                {
-                    Debug.Log(_current.FilePath);
-
-                    throw new ArgumentException();
-                }
+                _current = LoadSprite(_current);
             }
             return _current.Item;
         }
 
+        private Node LoadSprite(Node node)
+        {
+            if (node == null)
+                return null;
+            if(node.FilePath==default(string))
+                throw  new InvalidOperationException("you haven't set the path");
+            node.Item = Resources.Load<Sprite>(node.FilePath);
+            if (node.Item == null)
+            {
+                throw new ArgumentException();
+            }
+            return node;
+
+        }
     }
 }
