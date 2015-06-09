@@ -15,6 +15,8 @@ namespace Assets.SAnimation
 
             public void LoadSprite()
             {
+                if(_item!=null)
+                    return;
                 if (FilePath == "") 
                     throw new InvalidOperationException("You didn't set the file path");
                 _item=Resources.Load<Sprite>(FilePath);
@@ -79,6 +81,22 @@ namespace Assets.SAnimation
             return _current.GetSprite();
         }
 
+        public void Reset()
+        {
+            _current = FirstNode;
+        }
+
+        public void PreLoad()
+        {
+            Node node = FirstNode;
+            node.LoadSprite();
+            while (node.Next!=null)
+            {
+                node = node.Next;
+               node.LoadSprite();
+                 
+            }
+        }
         
 
     }
