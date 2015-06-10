@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.IO;
-using System.Text;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -10,24 +9,54 @@ namespace Assets.SAnimation
     public class SpriteAnimation : MonoBehaviour
     {
 
+        #region Variables
+
+        public const int NormalFps = 25;
+
         //Public Variables 
-        public float Fps = 10;
-        public string FolderName = "Factory";
+        public int Fps = 10;
+        public bool UseTimeScale;
+        public bool AutoStart;
         public bool Preload;
+        public string FolderName = "Factory";
+
+        //private Variables
         private SpriteRenderer _spriteRenderer;
         private CircleLinkedList _spriteAnimation;
-        public const int NormalFps =30;
-        
+
+        #endregion
 
         public void Start()
         {
             LoadAnimation();
+            
             if (Preload)
-            {
-                _spriteAnimation.PreLoad();
-            }
+                PreloadAnimation();
+
             _spriteRenderer = GetComponent<SpriteRenderer>();
+            if (AutoStart)
+                Start();
+        }
+
+        public void ResetAnimation()
+        {
+            _spriteAnimation.Reset();
+            _spriteRenderer.sprite = _spriteAnimation.FirstNode.GetSprite();
+        }
+
+        public void StopAnimation()
+        {
+            StopCoroutine(UpdeatingSprite());
+        }
+
+        public void StartAnimation()
+        {
             StartCoroutine(UpdeatingSprite());
+        }
+
+        public void PreloadAnimation()
+        {
+            _spriteAnimation.PreLoad();
         }
 
         private void LoadAnimation()
@@ -44,17 +73,38 @@ namespace Assets.SAnimation
         {
             while (true)
             {
-                Debug.Log("Wati for:" + Fps*Time.timeScale);
-                Debug.Log("Next Frame is:");
-            
-               GoToNextFrame();
-                yield return new WaitForSeconds(1 / (Fps * Time.timeScale));
+                if (Fps <= 0)
+                    yield return new WaitForFixedUpdate();
+
+
+                float f = Fps;
+                if (UseTimeScale)
+                    f *= Time.timeScale;
+
+                int countToSkip = (int)(Mathf.Floor(f/NormalFps));
+                float fasting = ((f-(NormalFps*countToSkip))/NormalFps)+1;
+
+
+                if (f < NormalFps)
+                {
+                    countToSkip = 1;
+                    fasting = f/NormalFps;
+                }
+           
+               GoToNextFrame(countToSkip);
+                yield return new WaitForSeconds(1 / (NormalFps*fasting));
             }
         }
 
-        private void GoToNextFrame()
+        private void GoToNextFrame(int count )
         {
-            _spriteRenderer.sprite = _spriteAnimation.Next();
+            Sprite tSprite = _spriteRenderer.sprite;
+            for (int i = count; i>=0;i--)
+                tSprite = _spriteAnimation.Next();
+
+            _spriteRenderer.sprite = tSprite;
+
         }
+
     }
 }

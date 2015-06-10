@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Assets.SAnimation
 {
     [RequireComponent(typeof(SpriteRenderer))]
-    public class AnimationBaker : MonoBehaviour
+    public class SBakeAnimation : MonoBehaviour
     {
         public string Name = "Factory";
         public bool Baked;
@@ -15,13 +15,18 @@ namespace Assets.SAnimation
 
         public void OnDrawGizmos()
         {
+            Baking();
+        }
+
+        protected  virtual void Baking()
+        {
             if (Baked)
             {
-                if(Sprites != null &&Sprites.Length>0 && Name != default(string))
+                if (Sprites != null && Sprites.Length > 0 && Name != default(string))
                 {
-                    
                     Sprites = Sprites.OrderBy(s => s.name).ToArray(); // Sorting over Array
-                    string [] spriteNames = SpriteNames();
+
+                    string[] spriteNames = SpriteNames();
                     SaveData(spriteNames);
 
                     SpriteAnimation sa = gameObject.AddComponent<SpriteAnimation>();
@@ -29,7 +34,6 @@ namespace Assets.SAnimation
                     Baked = false;
                     gameObject.GetComponent<SpriteRenderer>().sprite = Sprites[0];
                     DestroyImmediate(this);
-
                 }
                 else
                 {
@@ -37,10 +41,9 @@ namespace Assets.SAnimation
                     Baked = false;
                 }
             }
-
         }
 
-        private void SaveData(string[] spriteNames)
+        protected  virtual void SaveData(string[] spriteNames)
         {
 
             CircleLinkedList obj = new CircleLinkedList(spriteNames);
@@ -50,7 +53,7 @@ namespace Assets.SAnimation
             fs.Close();
         }
 
-        private string[] SpriteNames()
+        protected  virtual  string[] SpriteNames()
         {
             string[] spriteNames = new string[Sprites.Length];
             for (int i = 0; i < Sprites.Length; i++)
