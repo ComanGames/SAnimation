@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 namespace Assets.SAnimation
 {
-    [RequireComponent(typeof(SpriteRenderer))]
-    public class SBakeAnimator : SBakeAnimation
+
+
+
+    public class SBakeAnimator 
     {
         #region Variables
 
@@ -13,5 +16,13 @@ namespace Assets.SAnimation
 
         #endregion
 
+        public void Start()
+        {
+
+        }
+
+        public void Update()
+        {
+        }
     }
 }
