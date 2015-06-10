@@ -61,7 +61,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\SAnimation\SBakeAnimation.cs" />
     <Compile Include="Assets\SAnimation\CircleLinkedList.cs" />
     <Compile Include="Assets\SAnimation\SBakeAnimator.cs" />
     <Compile Include="Assets\SAnimation\SpriteAnimation.cs" />
