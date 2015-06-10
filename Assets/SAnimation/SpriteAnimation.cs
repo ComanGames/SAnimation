@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.IO;
+using System.Text;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -12,13 +13,19 @@ namespace Assets.SAnimation
         //Public Variables 
         public float Fps = 10;
         public string FolderName = "Factory";
+        public bool Preload;
         private SpriteRenderer _spriteRenderer;
         private CircleLinkedList _spriteAnimation;
+        public const int NormalFps =30;
+        
 
         public void Start()
         {
             LoadAnimation();
-            _spriteAnimation.PreLoad();
+            if (Preload)
+            {
+                _spriteAnimation.PreLoad();
+            }
             _spriteRenderer = GetComponent<SpriteRenderer>();
             StartCoroutine(UpdeatingSprite());
         }
@@ -37,6 +44,9 @@ namespace Assets.SAnimation
         {
             while (true)
             {
+                Debug.Log("Wati for:" + Fps*Time.timeScale);
+                Debug.Log("Next Frame is:");
+            
                GoToNextFrame();
                 yield return new WaitForSeconds(1 / (Fps * Time.timeScale));
             }

@@ -2,17 +2,16 @@
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using UnityEditor;
 using UnityEngine;
 
 namespace Assets.SAnimation
 {
+    [RequireComponent(typeof(SpriteRenderer))]
     public class AnimationBaker : MonoBehaviour
     {
         public string Name = "Factory";
         public bool Baked;
         public Sprite[] Sprites;
-
 
         public void OnDrawGizmos()
         {
@@ -27,8 +26,8 @@ namespace Assets.SAnimation
 
                     SpriteAnimation sa = gameObject.AddComponent<SpriteAnimation>();
                     sa.FolderName = Name;
-                    AssetDatabase.Refresh();
                     Baked = false;
+                    gameObject.GetComponent<SpriteRenderer>().sprite = Sprites[0];
                     DestroyImmediate(this);
 
                 }

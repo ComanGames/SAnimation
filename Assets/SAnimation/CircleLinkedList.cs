@@ -57,7 +57,6 @@ namespace Assets.SAnimation
             FirstNode = tempLast;
 
         }
-
         
         public Sprite Next()
         {
