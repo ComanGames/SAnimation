@@ -9,35 +9,36 @@ namespace Assets.SAnimation
     [RequireComponent(typeof(SpriteRenderer))]
     public class SAnimationBaker : MonoBehaviour
     {
-        public string Name = "Factory";
+        public string FolderName = "Factory";
         public bool Baked;
         public Sprite[] Sprites;
 
         public void OnDrawGizmos()
         {
             if (Baked)
+                Bake();
+
+        }
+
+        private void Bake()
+        {
+            if (Sprites != null && Sprites.Length > 0 && FolderName != default(string))
             {
-                if (Sprites != null && Sprites.Length > 0 && Name != default(string))
-                {
+                Sprites = Sprites.OrderBy(s => s.name).ToArray(); // Sorting over Array
+                string[] spriteNames = SpriteNames();
+                SaveData(spriteNames);
 
-                    Sprites = Sprites.OrderBy(s => s.name).ToArray(); // Sorting over Array
-                    string[] spriteNames = SpriteNames();
-                    SaveData(spriteNames);
-
-                    SpriteAnimation sa = gameObject.AddComponent<SpriteAnimation>();
-                    sa.FolderName = Name;
-                    Baked = false;
-                    gameObject.GetComponent<SpriteRenderer>().sprite = Sprites[0];
-                    DestroyImmediate(this);
-
-                }
-                else
-                {
-                    Debug.Log("Add elements to array or set the name");
-                    Baked = false;
-                }
+                SpriteAnimation sa = gameObject.AddComponent<SpriteAnimation>();
+                sa.FolderName = FolderName;
+                Baked = false;
+                gameObject.GetComponent<SpriteRenderer>().sprite = Sprites[0];
+                DestroyImmediate(this);
+                } 
+            else
+            {
+                Debug.Log("Add elements to array or set the name");
+                Baked = false;
             }
-
         }
 
         private void SaveData(string[] spriteNames)
@@ -45,7 +46,7 @@ namespace Assets.SAnimation
 
             CircleLinkedList obj = new CircleLinkedList(spriteNames);
             XmlSerializer xs = new XmlSerializer(typeof(CircleLinkedList));
-            FileStream fs = File.Create(Environment.CurrentDirectory + @"\Assets\Resources\" + Name + @"\Baked.xml");
+            FileStream fs = File.Create(Environment.CurrentDirectory + @"\Assets\Resources\" + FolderName + @"\Baked.xml");
             xs.Serialize(fs, obj);
             fs.Close();
         }
@@ -55,7 +56,7 @@ namespace Assets.SAnimation
             string[] spriteNames = new string[Sprites.Length];
             for (int i = 0; i < Sprites.Length; i++)
             {
-                spriteNames[i] = Name + "/" + Sprites[i].name;
+                spriteNames[i] = FolderName + "/" + Sprites[i].name;
             }
             return spriteNames;
         }
