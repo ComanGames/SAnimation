@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Assets.SAnimation
+namespace Assets.SAnimation.Bases
 {
     [Serializable]
     public class CircleLinkedList
