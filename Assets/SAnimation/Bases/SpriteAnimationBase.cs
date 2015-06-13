@@ -23,8 +23,13 @@ namespace Assets.SAnimation.Bases
         public void Start()
         {
             SRenderer = GetComponent<SpriteRenderer>();
+            if (Preloader.Instance != null) Preloader.Instance.Preloading += Instance_Preloading;
+            else
+            {
+                Starter();
+            }
 
-             Starter();
+
         }
 
         private void Starter()
@@ -33,10 +38,17 @@ namespace Assets.SAnimation.Bases
             {
                 LoadContainers();
                 if (Preload)
+                {
                     PreloadAnimation();
+                }
             }
             if(AutoStart)
                 StartAnimation();
+        }
+
+        private void Instance_Preloading()
+        {
+            Starter();
         }
 
         public virtual void LoadContainers()
