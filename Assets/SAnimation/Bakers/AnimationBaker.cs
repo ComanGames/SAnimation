@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Xml.Serialization;
-using Assets.SAnimation.Bases;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.SAnimation.Bakers
 {

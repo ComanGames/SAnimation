@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Assets.SAnimation.Bakers;
 using Assets.SAnimation.Bases;
 
 namespace Assets.SAnimation
@@ -15,7 +15,7 @@ namespace Assets.SAnimation
 
         public override void LoadContainers()
         {
-            AnimationContainer = LoadAnimationContainer(FolderName);
+            AnimationContainer = SerializationUtilits.LoadAnimationContainer(FolderName);
         }
     }
 }

@@ -1,54 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.SAnimation.Bakers;
 using Assets.SAnimation.Bases;
-using UnityEngine;
 
 namespace Assets.SAnimation
 {
     [Serializable]
-    public class AnimatorState
+    public class AnimationAddress
     {
-        public string Folder;
         public string Name;
-        public Sprite[] Sprites;
+        public string Folder;
+
+        public AnimationAddress(string name, string folder)
+        {
+            Name = name;
+            Folder = folder;
+        }
     }
 
     public class SAnimator : SpriteAnimationBase
     {
-        #region Variables
+       #region Variables
 
         public string DeffaultAnimation;
-        public Dictionary<string, string> AnimationStates;
         public Dictionary<string, CircleLinkedList> Animations;
+        public AnimationAddress[] AnimationAddresses;
 
         #endregion
 
-        public SAnimator()
-        {
-            AnimationStates = new Dictionary<string, string>();
-            Animations = new Dictionary<string, CircleLinkedList>();
-        }
-
         public override void LoadContainers()
         {
-            if(AnimationStates != null && (AnimationStates==null&&AnimationStates.Count==0))
-                throw new InvalidOperationException();
+            if (AnimationAddresses == null || AnimationAddresses.Length == 0)
+                throw new InvalidOperationException("We have no animation to preload");
 
-            if (AnimationStates != null)
-            {
-                Animations = new Dictionary<string, CircleLinkedList>(AnimationStates.Count);
+            Animations = new Dictionary<string, CircleLinkedList>(AnimationAddresses.Length);
 
-                foreach (KeyValuePair<string, string> animS in AnimationStates)
-                    Animations.Add(animS.Key,LoadAnimationContainer(animS.Value));
-            }
+            foreach (AnimationAddress t in AnimationAddresses)
+                Animations.Add(t.Name, SerializationUtilits.LoadAnimationContainer(t.Folder));
+
             GoToAnim(DeffaultAnimation);
-
         }
 
         public override void PreloadAnimation()
         {
             LoadContainers();
-            //Preloading each animation in over dictionary
+            //PreLoading each animation in over dictionary
             foreach (KeyValuePair<string, CircleLinkedList> valuePair in Animations)
                 valuePair.Value.PreLoad();
             Loaded = true;
@@ -56,13 +52,11 @@ namespace Assets.SAnimation
 
         public void GoToAnim(string animationName)
         {
+            if (!Animations.ContainsKey(animationName))
+                throw new InvalidOperationException("The animation isn't in over list");
+            //Chenging Animation
             ResetAnimation();
-            if (Animations.ContainsKey(animationName))
-            {
-                AnimationContainer = Animations[animationName];
-                return;
-            }
-            throw  new InvalidOperationException("No such type of animation");
+            AnimationContainer = Animations[animationName];
         }
 
     }

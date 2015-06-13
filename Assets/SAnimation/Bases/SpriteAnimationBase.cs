@@ -1,7 +1,4 @@
-using System;
 using System.Collections;
-using System.IO;
-using System.Xml.Serialization;
 using UnityEngine;
 
 namespace Assets.SAnimation.Bases
@@ -54,25 +51,6 @@ namespace Assets.SAnimation.Bases
             Loaded = true;
         }
 
-        protected CircleLinkedList LoadAnimationContainer(string folderName)
-        {
-            if(folderName==default(string))
-                throw new InvalidOperationException(); 
-            CircleLinkedList result;
-            TextAsset temp = Resources.Load<TextAsset>(folderName + @"/Bake");
-
-            if(temp==null)
-                throw new InvalidOperationException();
-
-            XmlSerializer xs = new XmlSerializer(typeof (CircleLinkedList));
-            using (TextReader reader = new StringReader(temp.text))
-            {
-                result = AnimationContainer = (CircleLinkedList) xs.Deserialize(reader);
-            }
-
-            return result;
-        }
-
         public void StartAnimation()
         {
             StartCoroutine(UpdeatingSprite());
@@ -80,8 +58,11 @@ namespace Assets.SAnimation.Bases
 
         public void ResetAnimation()
         {
-            AnimationContainer.Reset();
-            SRenderer.sprite = AnimationContainer.FirstNode.GetSprite();
+            if (AnimationContainer != null)
+            {
+                AnimationContainer.Reset();
+                SRenderer.sprite = AnimationContainer.FirstNode.GetSprite();
+            }
         }
 
         public void StopAnimation()
@@ -123,6 +104,7 @@ namespace Assets.SAnimation.Bases
                 GoToNextFrame(countToSkip);
                 yield return new WaitForSeconds(1/(NormalFps*fasting));
             }
-        }
+            // ReSharper disable once FunctionNeverReturns
+       }
     }
 }

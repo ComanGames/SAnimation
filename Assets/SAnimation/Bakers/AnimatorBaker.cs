@@ -30,15 +30,16 @@ namespace Assets.SAnimation.Bakers
                 if (AnimationStates != null && AnimationStates.Length > 0)
                 {
                     SAnimator sa = gameObject.AddComponent<SAnimator>();
+                    sa.AnimationAddresses = new AnimationAddress[AnimationStates.Length];
+
                     for (int i = 0; i < AnimationStates.Length; i++)
                     {
-                        SerializationUtilits.SerialazingAnimation(AnimationStates[i].Sprites,AnimationStates[i].Folder);
-                        sa.AnimationStates.Add(AnimationStates[i].Name,AnimationStates[i].Folder);
+                        SerializationUtilits.SerialazingAnimation(AnimationStates[i].Sprites, AnimationStates[i].Folder);
+                        sa.AnimationAddresses[i] = new AnimationAddress(AnimationStates[i].Name,AnimationStates[i].Folder);
                     }
-                    if (DeffaultAnimation == default(string))
-                        sa.DeffaultAnimation = AnimationStates[0].Name;
-                    else
-                        sa.DeffaultAnimation = DeffaultAnimation;
+
+                    sa.DeffaultAnimation = DeffaultAnimation == default(string) ? AnimationStates[0].Name : DeffaultAnimation;
+                    
                     DestroyImmediate(this);
 
                 }
