@@ -40,6 +40,9 @@ namespace Assets.SAnimation.Bases
         public Node FirstNode;
         private Node _current;
 
+        public delegate void AnimAction();
+        public event AnimAction OnEnd; 
+
         public CircleLinkedList()
         {
 
@@ -67,6 +70,7 @@ namespace Assets.SAnimation.Bases
 
             if (_current.Next == null)
             {
+                if (OnEnd != null) OnEnd();
                 if (_current == FirstNode)
                     return _current.GetSprite();
                 _current = FirstNode;
@@ -96,7 +100,11 @@ namespace Assets.SAnimation.Bases
                  
             }
         }
-        
 
+
+        public void ClearEndEvnt()
+        {
+            OnEnd = null;   
+        }
     }
 }

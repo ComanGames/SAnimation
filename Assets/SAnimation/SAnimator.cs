@@ -25,7 +25,8 @@ namespace Assets.SAnimation
         public string DeffaultAnimation;
         public Dictionary<string, CircleLinkedList> Animations;
         public AnimationAddress[] AnimationAddresses;
-
+        private Queue<string> _animationQueue;
+        private bool _autoGoToNext;
         #endregion
 
         public override void LoadContainers()
@@ -38,6 +39,9 @@ namespace Assets.SAnimation
             foreach (AnimationAddress t in AnimationAddresses)
                 Animations.Add(t.Name, SerializationUtilits.LoadAnimationContainer(t.Folder));
 
+            _animationQueue = new Queue<string>();
+            if (DeffaultAnimation == default(string))
+                DeffaultAnimation = AnimationAddresses[0].Name;
             GoToAnim(DeffaultAnimation);
         }
 
@@ -52,11 +56,46 @@ namespace Assets.SAnimation
 
         public void GoToAnim(string animationName)
         {
+            ChangeAnim(animationName);
+            _animationQueue = new Queue<string>();
+            GoToNextFrame(1);
+        }
+
+        private void ChangeAnim(string animationName)
+        {
             if (!Animations.ContainsKey(animationName))
-                throw new InvalidOperationException("The animation isn't in over list");
+                throw new InvalidOperationException("The animation" + animationName + " isn't in over list");
             //Chenging Animation
             ResetAnimation();
             AnimationContainer = Animations[animationName];
+            if (_autoGoToNext)
+            {
+                AnimationContainer.ClearEndEvnt();
+                AnimationContainer.OnEnd += NextInQueue;
+            }
+        }
+
+        private void NextInQueue()
+        {
+            if (_animationQueue.Count > 0)
+            {
+                string nextAnimation = _animationQueue.Dequeue();
+                ChangeAnim(nextAnimation);
+            }
+            else
+                _autoGoToNext = false;
+        }
+
+        public void AddNextAnimation(string animName)
+        {
+            if (!_autoGoToNext)
+            {
+                _autoGoToNext = true;
+                AnimationContainer.ClearEndEvnt();
+                AnimationContainer.OnEnd += NextInQueue;
+
+            }
+            _animationQueue.Enqueue(animName);
         }
 
     }
