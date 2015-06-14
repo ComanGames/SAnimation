@@ -22,18 +22,12 @@ namespace Assets.SAnimation.Bases
 
         public void Start()
         {
-            SRenderer = GetComponent<SpriteRenderer>();
-            if (Preloader.Instance != null) Preloader.Instance.Preloading += Instance_Preloading;
-            else
-            {
-                Starter();
-            }
-
-
+            Preloader.Instance.Preloading += Starter;
         }
 
         private void Starter()
         {
+            SRenderer = GetComponent<SpriteRenderer>();
             if (!Loaded)
             {
                 LoadContainers();
@@ -44,11 +38,6 @@ namespace Assets.SAnimation.Bases
             }
             if(AutoStart)
                 StartAnimation();
-        }
-
-        private void Instance_Preloading()
-        {
-            Starter();
         }
 
         public virtual void LoadContainers()

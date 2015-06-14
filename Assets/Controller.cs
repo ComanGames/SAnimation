@@ -12,14 +12,18 @@ namespace Assets
 
         public void Update()
         {
+           // useController();
+            
+        }
+
+        private void useController()
+        {
             if (Input.GetAxisRaw("Vertical") == 0)
             {
-                
             }
 
-            if(Input.GetAxisRaw("Vertical")==1)
+            if (Input.GetAxisRaw("Vertical") == 1)
             {
-                
                 MyAnimator.GoToAnim("Jump");
                 MyAnimator.AddNextAnimation(MyAnimator.DeffaultAnimation);
             }
@@ -32,6 +36,5 @@ namespace Assets
                 MyAnimator.AddNextAnimation("Run");
             }
         }
-
     }
 }
